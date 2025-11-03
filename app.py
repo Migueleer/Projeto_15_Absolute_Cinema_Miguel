@@ -9,19 +9,28 @@ st.set_page_config(
 )
 
 # Carregar dados dos filmes
-
+filmes = pd.read_csv('filmes.csv')
 
 # Sidebar apenas com filtro de gênero
-# coloque a logo e a selectbox
-
+st.sidebar.title('🎬ToroFlix🎬')
+st.sidebar.image('logo.png')
+st.sidebar.title("🎭 Filtros🎭 ")
+genero_escolhido = st.sidebar.selectbox(
+    "Filtrar por gênero:",
+    ["Todos"] + sorted(filmes['Genre'].unique().tolist())
+)
 
 # Aplicar filtro
-
+if genero_escolhido == "Todos":
+    filmes_filtrados = filmes
+else:
+    filmes_filtrados = filmes[filmes['Genre'] == genero_escolhido]
 
 # Título da página
+st.title("🎬Top Filmes IMDb🎬")
 
 # Mostrar quantidade de filmes
-
+st.write(f"**{len(filmes_filtrados)} filmes filtrados**")
 
 # Mostrar filmes em grid (3 colunas)
 colunas = st.columns(3)
@@ -37,8 +46,12 @@ for index, filme in filmes_filtrados.iterrows():
             st.image(filme['Image URL'], use_container_width=True)
             
             # Informações do filme
+            st.subheader(f"#{filme['Rank']} - {filme['Title']}")
+            st.write(f"**📅Ano:** {filme['Year']}")
+            st.write(f"**⭐Nota:** {filme['Rating']}")
+            st.write(f"**⏱️Duração:** {filme['Duration']}")
+            st.write(f"**🎭 Gênero:** {filme['Genre']}")
 
-            
             # Botão para ver no IMDb
             if st.button(f"Ver no IMDb", key=f"btn_{filme['Rank']}"):
                 st.markdown(f"[🔗 Abrir página do IMDb]({filme['IMDb URL']})")
